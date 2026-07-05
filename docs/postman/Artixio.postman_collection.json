@@ -1,0 +1,720 @@
+{
+  "info": {
+    "_postman_id": "e0f1fd85-79e0-48c3-87fc-db1b2ef3d9f2",
+    "name": "Artixio - Regulatory Intelligence Triage Pipeline",
+    "description": "Full endpoint set for the Artixio backend assignment. Run 'Create Authority' -> 'Create Directive' -> 'Create Action Item' in order first (or via Collection Runner) so the chained {{authorityId}}, {{directiveId}}, {{actionItemId}} variables get populated automatically.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "38499245"
+  },
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "health"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authorities",
+      "item": [
+        {
+          "name": "List Authorities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/authorities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "authorities"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Authority by Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/authorities/{{authorityId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "authorities",
+                "{{authorityId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Authority",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body && body.data && body.data.id) {",
+                  "  pm.collectionVariables.set('authorityId', body.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Health Canada\",\n  \"code\": \"HC\",\n  \"country\": \"Canada\",\n  \"websiteUrl\": \"https://www.canada.ca/en/health-canada.html\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/authorities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "authorities"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Authority - Validation Error (missing fields)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"X\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/authorities",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "authorities"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Directives",
+      "item": [
+        {
+          "name": "List Directives",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/directives?page=1&limit=25",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "directives"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "25"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Directives - Corrupt Only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/directives?corruptOnly=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "directives"
+              ],
+              "query": [
+                {
+                  "key": "corruptOnly",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Directives - Filter by Status & Severity",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/directives?status=active&severity=high",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "directives"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "active"
+                },
+                {
+                  "key": "severity",
+                  "value": "high"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Directives - Search",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/directives?search=biosimilar",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "directives"
+              ],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "biosimilar"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Directive by Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/directives/{{directiveId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "directives",
+                "{{directiveId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Directive (clean data)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body && body.data && body.data.id) {",
+                  "  pm.collectionVariables.set('directiveId', body.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"authorityId\": \"effabfcc-d3e8-44c9-b1bb-20a2410762eb\",\n  \"referenceCode\": \"HC-2024-0011\",\n  \"title\": \"New pharmacovigilance reporting timelines\",\n  \"summary\": \"Shortens the adverse event reporting window from 30 to 15 days.\",\n  \"rawStatus\": \"Active\",\n  \"severity\": \"High\",\n  \"publishedDate\": \"2024-05-01\",\n  \"effectiveDate\": \"2024-07-01\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/directives",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "directives"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Directive - Messy Data (unrecognized status, missing dates)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"authorityId\": \"effabfcc-d3e8-44c9-b1bb-20a2410762eb\",\n  \"referenceCode\": \"HC-2024-0012\",\n  \"title\": \"Draft update to labeling rules\",\n  \"rawStatus\": \"N/A\",\n  \"severity\": \"unknown\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/directives",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "directives"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Directive - Validation Error (missing required fields)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"referenceCode\": \"X\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/directives",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "directives"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "To soft delete a Directives",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/directives/{{directiveId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "directives",
+                "{{directiveId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "To restore a Directives",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/directives/{{directiveId}}/restore",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "directives",
+                "{{directiveId}}",
+                "restore"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Action Items",
+      "item": [
+        {
+          "name": "List Action Items",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/action-items?page=1&limit=25",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "25"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Action Items - Flagged Only",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/action-items?flaggedOnly=true",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items"
+              ],
+              "query": [
+                {
+                  "key": "flaggedOnly",
+                  "value": "true"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List Action Items - By Status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/action-items?status=PENDING",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items"
+              ],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "PENDING"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Action Item by Id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/action-items/{{actionItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items",
+                "{{actionItemId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Action Item (clean priority)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const body = pm.response.json();",
+                  "if (body && body.data && body.data.id) {",
+                  "  pm.collectionVariables.set('actionItemId', body.data.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"directiveId\": \"{{directiveId}}\",\n  \"title\": \"Update SOP-114 to reflect new reporting window\",\n  \"description\": \"Revise the pharmacovigilance SOP and retrain QA staff.\",\n  \"assignee\": \"Priya Nair\",\n  \"priority\": \"High\",\n  \"dueDate\": \"2024-08-15\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/action-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Action Item - Messy Priority (gets flagged)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"directiveId\": \"{{directiveId}}\",\n  \"title\": \"Follow up with QA on retraining\",\n  \"priority\": \"asap\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/action-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status - Valid Transition (PENDING -> IN_PROGRESS)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"IN_PROGRESS\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/action-items/{{actionItemId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items",
+                "{{actionItemId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status - Valid Transition (IN_PROGRESS -> RESOLVED)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"RESOLVED\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/action-items/{{actionItemId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items",
+                "{{actionItemId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Status - Invalid Transition (RESOLVED -> PENDING, expect 409)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"PENDING\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/action-items/{{actionItemId}}/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items",
+                "{{actionItemId}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Action Item - Validation Error (bad directiveId)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"directiveId\": \"not-a-uuid\",\n  \"title\": \"X\",\n  \"priority\": \"High\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/action-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "To delete an Action Item",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/action-items/{{actionItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items",
+                "{{actionItemId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "To restore an Action Item",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/action-items/{{actionItemId}}/restore",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "action-items",
+                "{{actionItemId}}",
+                "restore"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000/api/v1"
+    },
+    {
+      "key": "authorityId",
+      "value": ""
+    },
+    {
+      "key": "directiveId",
+      "value": ""
+    },
+    {
+      "key": "actionItemId",
+      "value": ""
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Issuing body for a directive. FDA, EMA, CDSCO, etc.
+model RegulatoryAuthority {
+  id         String   @id @default(uuid())
+  name       String
+  code       String   @unique
+  country    String
+  websiteUrl String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  directives ComplianceDirective[]
+
+  @@map("regulatory_authorities")
+}
+
+// A directive as it comes in from an authority's feed/portal.
+// rawStatus, severity and the two date fields are intentionally typed loose
+// (String / nullable) because this data originates outside our system and
+// cannot be trusted to already match our internal vocabulary. Normalizing
+// and flagging it is done at the application layer, not the DB layer -
+// see src/utils/normalizeRegulatoryData.ts
+model ComplianceDirective {
+  id            String    @id @default(uuid())
+  authorityId   String
+  authority     RegulatoryAuthority @relation(fields: [authorityId], references: [id])
+
+  referenceCode String
+  title         String
+  summary       String?
+
+  rawStatus     String    // e.g. "Active", "actve", "N/A", ""
+  severity      String    // e.g. "High", "high", "critical", "unknown", null-ish strings
+
+  publishedDate DateTime?
+  effectiveDate DateTime?
+
+  isCorrupt     Boolean   @default(false)
+  corruptReason String?
+
+  // Regulatory records are never permanently deleted - soft delete keeps
+  // the row (and anything referencing it) intact. Every existing GET query
+  // filters this out at the repository layer, see directive.repository.ts.
+  deletedAt     DateTime?
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  actionItems   ActionItem[]
+
+  @@index([authorityId])       // FK join + authorityId filter on GET /directives
+  @@index([rawStatus])         // status filter
+  @@index([severity])          // severity filter
+  @@index([isCorrupt])         // corruptOnly filter, the main triage view
+  @@index([publishedDate])     // date-range filtering/sorting
+  @@index([effectiveDate])     // date-range filtering/sorting
+  @@index([deletedAt])         // now checked on every query via the soft-delete filter
+  @@map("compliance_directives")
+}
+
+// Internal work item created by a compliance officer against a directive.
+// Status here IS a strict enum because, unlike the directive fields above,
+// this state is set exclusively through our own API - there is no external
+// source of truth to be messy about.
+enum ActionItemStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  BLOCKED
+}
+
+model ActionItem {
+  id           String   @id @default(uuid())
+  directiveId  String
+  directive    ComplianceDirective @relation(fields: [directiveId], references: [id])
+
+  title        String
+  description  String?
+  assignee     String?
+
+  status       ActionItemStatus @default(PENDING)
+  priority     String   // loose on purpose, same reasoning as directive.severity
+  dueDate      DateTime?
+
+  isFlagged    Boolean  @default(false)
+  flagReason   String?
+
+  // Same soft-delete reasoning as ComplianceDirective.deletedAt.
+  deletedAt    DateTime?
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([directiveId])  // FK join + per-directive lookup (row expansion in the UI)
+  @@index([status])       // status filter, also read on every status-transition check
+  @@index([isFlagged])    // flaggedOnly filter
+  @@index([deletedAt])    // now checked on every query via the soft-delete filter
+  @@map("action_items")
+}
+
+// Append-only history of Action Item status changes. Kept as a separate,
+// plain table (no relation back to ActionItem) so the audit trail survives
+// independently of whatever happens to the action item itself.
+model AuditLog {
+  id             String   @id @default(uuid())
+  actionItemId   String
+  previousStatus String
+  newStatus      String
+  changedAt      DateTime @default(now())
+
+  @@index([actionItemId])
+  @@map("audit_logs")
+}
