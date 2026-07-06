@@ -122,11 +122,9 @@ If you only have two minutes to poke around before the Loom review:
 
 ## 📬 API Testing
 
-The Postman collection is available at:
+The Postman collection is available here:
 
-```text
-docs/postman/Artixio.postman_collection.json
-```
+[`docs/postman/Artixio.postman_collection.json`](docs/postman/Artixio.postman_collection.json)
 
 Import the collection into Postman and start testing immediately after running the backend.
 
@@ -141,9 +139,10 @@ The collection includes:
 
 ## 🎥 Demo
 
-Loom walkthrough:
+Watch the project walkthrough here:
 
-> _(Link will be added after recording the demo video.)_
+[🎥 Loom Video Walkthrough](https://www.loom.com/share/52608467b61e4576830b3dc924a91433)
+
 
 ---
 
