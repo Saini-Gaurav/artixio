@@ -1,8 +1,6 @@
 import { z } from "zod";
 
-// Deliberately loose here - rawStatus/severity are free text on input
-// because that's exactly what an external feed would hand us. The
-// normalization service decides afterward whether it's usable.
+// Deliberately loose here - rawStatus/severity are free text on input because that's exactly what an external feed would hand us. The normalization service decides afterward whether it's usable.
 export const createDirectiveSchema = z.object({
   authorityId: z.string().uuid(),
   referenceCode: z.string().min(1).max(50),

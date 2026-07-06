@@ -1,6 +1,4 @@
-// This is the one place that knows what "clean" regulatory data looks like.
-// Both the seed script and the directive service call into this so a record
-// gets flagged the same way no matter when it's evaluated.
+// This is the one place that knows what "clean" regulatory data looks like. Both the seed script and the directive service call into this so a record gets flagged the same way no matter when it's evaluated.
 
 export const ALLOWED_STATUSES = ["active", "superseded", "withdrawn", "draft"] as const;
 export const ALLOWED_SEVERITIES = ["low", "medium", "high", "critical"] as const;

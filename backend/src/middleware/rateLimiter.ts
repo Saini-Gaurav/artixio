@@ -12,8 +12,7 @@ export const apiRateLimiter = rateLimit({
   },
 });
 
-// Slightly tighter limit for write operations - status changes are the
-// one thing an over-eager script could hammer.
+// Slightly tighter limit for write operations - status changes are the one thing an over-eager script could hammer.
 export const writeRateLimiter = rateLimit({
   windowMs: env.rateLimit.windowMs,
   max: Math.max(20, Math.floor(env.rateLimit.max / 4)),

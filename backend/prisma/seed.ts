@@ -12,9 +12,7 @@ const AUTHORITIES = [
   { name: "Pharmaceuticals and Medical Devices Agency", code: "PMDA", country: "Japan", websiteUrl: "https://www.pmda.go.jp" },
 ];
 
-// Hand-picked directives that hit every edge case the assignment asks for,
-// on top of whatever faker generates below. Kept explicit and separate from
-// the bulk-generated batch so they're easy to point to in the walkthrough.
+// Hand-picked directives that hit every edge case the assignment asks for, on top of whatever faker generates below. Kept explicit and separate from the bulk-generated batch so they're easy to point to in the walkthrough.
 const MESSY_DIRECTIVE_SEEDS = [
   {
     referenceCode: "FDA-2024-0091",
